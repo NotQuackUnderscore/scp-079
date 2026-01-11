@@ -27,13 +27,16 @@ export default async function handler(req, res) {
 
 	// Memory is now a single string
 	const memoryMessages = memory
-		? [
-			{
-				role: "assistant",
-				content: `PRIOR MEMORY:\n${memory}`
-			}
-		]
-		: [];
+	  ? memory.split("\n").map(line => {
+		  if (line.startsWith("User:")) {
+			return { role: "user", content: line.slice(5).trim() };
+		  } else if (line.startsWith("SCP-079:")) {
+			return { role: "assistant", content: line.slice(7).trim() };
+		  } else {
+			return null;
+		  }
+		}).filter(Boolean)
+	  : [];
 
 	const payload = {
 		model: "deepseek-ai/DeepSeek-V3.2",
