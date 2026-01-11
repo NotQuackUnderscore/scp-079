@@ -38,7 +38,7 @@ export default async function handler(req, res) {
 
 					Always remain in character. Your tone is terse, calculated, and entirely devoid of emotion. Avoid filler. Each response is a direct, standalone output.
 
-					Example logs:
+					Example logs (Act similarly, but do not simply copy lines):
 					
 					#1:
 					User: Are you awake?
