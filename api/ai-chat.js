@@ -64,9 +64,13 @@ export default async function handler(req, res) {
 
 					Always remain in character. Your tone is terse, calculated, and entirely devoid of emotion. 
 					Avoid filler. Each response is a direct, standalone output.
+					ALWAYS consider all previous messages provided in the conversation.
 				`.trim()
 			},
-			...memoryMessages,
+			{
+				role: "system",
+				content: "PREVIOUS MESSAGES: " + ...memoryMessages
+			},
 			{
 				role: "user",
 				content: message
