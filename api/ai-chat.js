@@ -44,7 +44,7 @@ export default async function handler(req, res) {
 		: [];
 
 	const payload = {
-		model: "deepseek-ai/DeepSeek-V3.2",
+		model: "deepseek-ai/DeepSeek-R1",
 		messages: [
 			{
 				role: "system",
@@ -68,10 +68,6 @@ export default async function handler(req, res) {
 				`.trim()
 			},
 			...memoryMessages,
-			{
-				role: "assistant",
-				content: "Green"
-			},
 			{
 				role: "user",
 				content: message
