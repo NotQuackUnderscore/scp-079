@@ -2,5 +2,7 @@
   "name": "scp-079-test",
   "version": "1.0.0",
   "type": "module",
-  "dependencies": {}
+  "dependencies": {
+    "axios": "^1.13.2"
+  }
 }
