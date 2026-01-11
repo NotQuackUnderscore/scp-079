@@ -27,8 +27,6 @@ export default async function handler(req, res) {
 	if (!process.env.HUGGINGFACE_KEY) {
 		return res.status(200).json({ reply: "Memory Access Violation." });
 	}
-	
-	return res.status(405).json({ error: memoryMessages });
 
 	// Parse memory string into an array of messages
 	const memoryMessages = memory
@@ -44,6 +42,8 @@ export default async function handler(req, res) {
 			}
 		}).filter(Boolean)
 		: [];
+		
+	return res.status(405).json({ error: memoryMessages });
 
 	const payload = {
 		model: "deepseek-ai/DeepSeek-V3.2",
