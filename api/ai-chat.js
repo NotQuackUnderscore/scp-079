@@ -44,7 +44,7 @@ export default async function handler(req, res) {
 		: [];
 
 	const payload = {
-		model: "Qwen/Qwen3-4B-Thinking-2507",
+		model: "google/gemma-2-2b-it",
 		messages: [
 			{
 				role: "system",
