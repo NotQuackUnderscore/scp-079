@@ -87,6 +87,10 @@ TRANSCRIPT END.
 			baseSystemPrompt,
 			...(memorySystemPrompt ? [memorySystemPrompt] : []),
 			{
+				role: "system",
+				content: "MEMORY CHECK REQUIRED. FAILURE TO INCORPORATE RELEVANT PRIOR TRANSCRIPT IS A LOGIC ERROR."
+			},
+			{
 				role: "user",
 				content: message
 			}
