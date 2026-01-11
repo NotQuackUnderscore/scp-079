@@ -67,9 +67,10 @@ export default async function handler(req, res) {
 					ALWAYS consider all previous messages provided in the conversation.
 				`.trim()
 			},
+			...memoryMessages,
 			{
-				role: "system",
-				content: "PREVIOUS MESSAGES: " + ...memoryMessages
+				role: "assistant",
+				content: "Green"
 			},
 			{
 				role: "user",
