@@ -44,7 +44,7 @@ export default async function handler(req, res) {
 		: [];
 
 	const payload = {
-		model: "deepseek-ai/DeepSeek-R1",
+		model: "Qwen/Qwen3-4B-Thinking-2507",
 		messages: [
 			{
 				role: "system",
