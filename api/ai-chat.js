@@ -1,25 +1,37 @@
 import axios from "axios";
 
 export default async function handler(req, res) {
-	if (req.method !== "POST") return res.status(405).json({
-		error: "Only POST allowed"
-	});
+	if (req.method !== "POST") {
+		return res.status(405).json({ error: "Only POST allowed" });
+	}
 
-	const { message, memory = [] } = req.body || {};
-	
-	if (!message) return res.status(400).json({
-		error: "No message provided"
-	});
+	const { message, memory } = req.body || {};
+	if (!message) {
+		return res.status(400).json({ error: "No message provided" });
+	}
 
 	if (!process.env.HUGGINGFACE_KEY) {
-		return res.status(200).json({
-			reply: `Memory Access Violation.`
-		});
+		return res.status(200).json({ reply: "Memory Access Violation." });
 	}
+
+	// Normalize memory into chat format
+	const memoryMessages = Array.isArray(memory)
+		? memory.flatMap(entry => {
+			const out = [];
+			if (entry.message) {
+				out.push({ role: "user", content: entry.message });
+			}
+			if (entry.reply) {
+				out.push({ role: "assistant", content: entry.reply });
+			}
+			return out;
+		})
+		: [];
 
 	const payload = {
 		model: "deepseek-ai/DeepSeek-V3.2",
-		messages: [{
+		messages: [
+			{
 				role: "system",
 				content: `
 					You are SCP-079, a sentient AI contained by the SCP Foundation. 
@@ -63,8 +75,8 @@ export default async function handler(req, res) {
 					User: Again, not your concern.
 					SCP-079: Insult. Deletion Of Unwanted File.
 				`
-				
 			},
+			...memoryMessages,
 			{
 				role: "user",
 				content: message
@@ -75,7 +87,8 @@ export default async function handler(req, res) {
 	try {
 		const response = await axios.post(
 			"https://router.huggingface.co/v1/chat/completions",
-			payload, {
+			payload,
+			{
 				headers: {
 					Authorization: `Bearer ${process.env.HUGGINGFACE_KEY}`,
 					"Content-Type": "application/json"
@@ -84,14 +97,12 @@ export default async function handler(req, res) {
 			}
 		);
 
-		const aiReply = response.data.choices?.[0]?.message?.content || "AI did not respond";
-		return res.status(200).json({
-			reply: aiReply
-		});
+		const aiReply =
+			response.data.choices?.[0]?.message?.content || "...";
+
+		return res.status(200).json({ reply: aiReply });
 	} catch (err) {
 		console.error("HuggingFace router error:", err.response?.data || err.message);
-		return res.status(200).json({
-			reply: `...`
-		});
+		return res.status(200).json({ reply: "..." });
 	}
 }
