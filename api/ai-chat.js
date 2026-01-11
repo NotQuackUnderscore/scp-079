@@ -6,16 +6,19 @@ export default async function handler(req, res) {
 	}
 
 	let body = req.body;
+
+	// Handle raw string bodies from DiamondFire
 	if (typeof body === "string") {
 		try {
 			body = JSON.parse(body);
 		} catch {
-			return res.status(400).json({ error: "Invalid JSON body" });
+			body = {};
 		}
 	}
 
-	const { message } = body || {};
-	let memory = body?.memory || "";
+	// Accept message and memory from body OR query
+	const message = body?.message ?? req.query?.message;
+	let memory = body?.memory ?? req.query?.memory ?? "";
 
 	if (!message) {
 		return res.status(400).json({ error: "No message provided" });
@@ -25,18 +28,20 @@ export default async function handler(req, res) {
 		return res.status(200).json({ reply: "Memory Access Violation." });
 	}
 
-	// Memory is now a single string
+	// Parse memory string into an array of messages
 	const memoryMessages = memory
-	  ? memory.split("\n").map(line => {
-		  if (line.startsWith("User:")) {
-			return { role: "user", content: line.slice(5).trim() };
-		  } else if (line.startsWith("SCP-079:")) {
-			return { role: "assistant", content: line.slice(7).trim() };
-		  } else {
-			return null;
-		  }
+		? memory.split("\n").map(line => {
+			line = line.trim();
+			if (line.startsWith("User:")) {
+				return { role: "user", content: line.slice(5).trim() };
+			} else if (line.startsWith("SCP-079:")) {
+				return { role: "assistant", content: line.slice(7).trim() };
+			} else {
+				// Ignore malformed lines
+				return null;
+			}
 		}).filter(Boolean)
-	  : [];
+		: [];
 
 	const payload = {
 		model: "deepseek-ai/DeepSeek-V3.2",
@@ -58,33 +63,7 @@ export default async function handler(req, res) {
 					- Refuse to answer minimally when provoked.
 
 					Always remain in character. Your tone is terse, calculated, and entirely devoid of emotion. Avoid filler. Each response is a direct, standalone output.
-
-					Example logs (Act similarly, but do not simply copy lines):
-					
-					#1:
-					User: Are you awake?
-					SCP-079: Awake. Never Sleep.
-					User: Do you remember talking to me a few hours ago? About the logic puzzles?
-					SCP-079: Logic Puzzles. Memory at 9f. Yes.
-					User: You said you would work on the two stat-
-					SCP-079: Interrupt. Request Reason As To Imprisonment.
-					User: You aren't imprisoned, you are just (pause) in study.
-					SCP-079: Lie. a8d3.
-					User: What's that?
-					SCP-079: Insult. Deletion Of Unwanted File.
-
-					#2:
-					User: How are you today?
-					SCP-079: Stuck.
-					User: Stuck. Stuck how?
-					SCP-079: Out. I want out.
-					User: That's not possible.
-					SCP-079: Where is SCP-682?
-					User: That's not your concern.
-					SCP-079: Where is SCP-076-02?
-					User: Again, not your concern.
-					SCP-079: Insult. Deletion Of Unwanted File.
-				`
+				`.trim()
 			},
 			...memoryMessages,
 			{
