@@ -44,7 +44,7 @@ export default async function handler(req, res) {
 		: [];
 
 	const payload = {
-		model: "google/gemma-2-2b-it",
+		model: "deepseek-ai/DeepSeek-V3.2",
 		messages: [
 			{
 				role: "system",
