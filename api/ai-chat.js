@@ -6,21 +6,24 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Only POST requests allowed" });
   }
 
-  // Parse message from request body
+  // Extract message from request body
   const { message } = req.body || {};
   if (!message) {
     return res.status(400).json({ error: "No message provided" });
   }
 
-  // Prepare HuggingFace payload
+  // Payload for HuggingFace chat API
   const payload = {
-    model: "gpt-4", // Replace with your desired model
+    model: "Qwen/Qwen2.5-7B-Instruct-1M", // SCP-079-friendly model
     messages: [
-      { role: "user", content: message }
+      {
+        role: "user",
+        content: message
+      }
     ]
   };
 
-  // If HuggingFace API key is missing, fallback to static reply
+  // Make sure HuggingFace API key is set
   if (!process.env.HUGGINGFACE_KEY) {
     return res.status(200).json({
       reply: `You said: ${message} (HuggingFace API key not set)`
@@ -36,7 +39,7 @@ export default async function handler(req, res) {
           Authorization: `Bearer ${process.env.HUGGINGFACE_KEY}`,
           "Content-Type": "application/json"
         },
-        timeout: 10000 // 10s timeout to prevent Vercel crash
+        timeout: 25000 // 25s timeout for serverless function
       }
     );
 
@@ -47,7 +50,7 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error("HuggingFace error:", err.response?.data || err.message);
 
-    // Fallback static response to prevent DiamondFire failure
+    // Fallback static reply to avoid crashing DiamondFire
     return res.status(200).json({
       reply: `AI is unavailable right now. You said: ${message}`
     });
