@@ -1,8 +1,3 @@
-module.exports = function (req, res) {
-    if (req.method !== "POST") return res.status(405).json({ error: "Only POST allowed" });
-
-    const { message } = req.body;
-    if (!message) return res.status(400).json({ error: "No message provided" });
-
-    res.status(200).json({ reply: `You said: ${message}` });
+module.exports = (req, res) => {
+  res.status(200).json({ reply: "Test successful" });
 };
