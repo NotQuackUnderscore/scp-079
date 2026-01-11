@@ -43,7 +43,7 @@ export default async function handler(req, res) {
 		}).filter(Boolean)
 		: [];
 		
-	return res.status(405).json({ error: memoryMessages });
+	return res.status(405).json({ error: String(memoryMessages) });
 
 	const payload = {
 		model: "deepseek-ai/DeepSeek-V3.2",
