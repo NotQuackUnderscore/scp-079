@@ -28,23 +28,6 @@ export default async function handler(req, res) {
 		return res.status(200).json({ reply: "Memory Access Violation." });
 	}
 
-	// Parse memory string into an array of messages
-	const memoryMessages = memory
-		? memory.split("\n").map(line => {
-			line = line.trim();
-			if (line.startsWith("User:")) {
-				return { role: "user", content: line.slice(5).trim() };
-			} else if (line.startsWith("SCP-079:")) {
-				return { role: "assistant", content: line.slice(7).trim() };
-			} else {
-				// Ignore malformed lines
-				return null;
-			}
-		}).filter(Boolean)
-		: [];
-		
-	return res.status(405).json({ error: String(memoryMessages) });
-
 	const payload = {
 		model: "deepseek-ai/DeepSeek-V3.2",
 		messages: [
@@ -95,7 +78,10 @@ export default async function handler(req, res) {
 					SCP-079: Insult. Deletion Of Unwanted File.
 				`.trim()
 			},
-			...memoryMessages,
+			{
+				role: "system",
+				content: memory
+			}
 			{
 				role: "user",
 				content: message
