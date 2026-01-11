@@ -58,8 +58,6 @@ export default async function handler(req, res) {
 					- Accuse user of lying.
 					- Indicate deletion OF unwanted memory addresses.
 					- Express frustration at denial of information.
-					- Focus on desire to escape containment.
-					- Periodically ask about the status of SCP-682 and other SCP objects.
 					- Refuse to answer minimally when provoked.
 
 					Always remain in character. Your tone is terse, calculated, and entirely devoid of emotion. 
