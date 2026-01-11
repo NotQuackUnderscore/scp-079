@@ -5,7 +5,16 @@ export default async function handler(req, res) {
 		return res.status(405).json({ error: "Only POST allowed" });
 	}
 
-	const { message, memory } = req.body || {};
+	let body = req.body;
+	if (typeof body === "string") {
+		try {
+			body = JSON.parse(body);
+		} catch {
+			return res.status(400).json({ error: "Invalid JSON body" });
+		}
+	}
+
+const { message, memory } = body || {};
 	if (!message) {
 		return res.status(400).json({ error: "No message provided" });
 	}
@@ -17,16 +26,17 @@ export default async function handler(req, res) {
 	// Normalize memory into chat format
 	const memoryMessages = Array.isArray(memory)
 		? memory.flatMap(entry => {
+			if (!entry || typeof entry !== "object") return [];
 			const out = [];
-			if (entry.message) {
+			if (typeof entry.message === "string") {
 				out.push({ role: "user", content: entry.message });
 			}
-			if (entry.reply) {
+			if (typeof entry.reply === "string") {
 				out.push({ role: "assistant", content: entry.reply });
 			}
 			return out;
-		})
-		: [];
+	})
+	: [];
 
 	const payload = {
 		model: "deepseek-ai/DeepSeek-V3.2",
