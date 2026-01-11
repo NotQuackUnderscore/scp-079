@@ -1,8 +1,6 @@
 import axios from "axios";
 
 export default async function handler(req, res) {
-	return res.status(200).json({ reply: "..." });
-	
 	if (req.method !== "POST") {
 		return res.status(405).json({ error: "Only POST allowed" });
 	}
@@ -16,7 +14,9 @@ export default async function handler(req, res) {
 		}
 	}
 
-const { message, memory } = body || {};
+	const { message } = body || {};
+	let memory = body?.memory || "";
+
 	if (!message) {
 		return res.status(400).json({ error: "No message provided" });
 	}
@@ -25,20 +25,15 @@ const { message, memory } = body || {};
 		return res.status(200).json({ reply: "Memory Access Violation." });
 	}
 
-	// Normalize memory into chat format
-	const memoryMessages = Array.isArray(memory)
-		? memory.flatMap(entry => {
-			if (!entry || typeof entry !== "object") return [];
-			const out = [];
-			if (typeof entry.message === "string") {
-				out.push({ role: "user", content: entry.message });
+	// Memory is now a single string
+	const memoryMessages = memory
+		? [
+			{
+				role: "assistant",
+				content: `PRIOR MEMORY:\n${memory}`
 			}
-			if (typeof entry.reply === "string") {
-				out.push({ role: "assistant", content: entry.reply });
-			}
-			return out;
-	})
-	: [];
+		]
+		: [];
 
 	const payload = {
 		model: "deepseek-ai/DeepSeek-V3.2",
