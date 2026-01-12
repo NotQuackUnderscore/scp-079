@@ -107,7 +107,7 @@ TRANSCRIPT END.
 		: null;
 
 	const payload = {
-		model: "deepseek-ai/DeepSeek-V3.2",
+		model: "meta-llama/Meta-Llama-3-8B-Instruct",
 		messages: [
 			baseSystemPrompt,
 			...(memorySystemPrompt ? [memorySystemPrompt] : []),
