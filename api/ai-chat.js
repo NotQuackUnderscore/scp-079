@@ -102,7 +102,7 @@ TRANSCRIPT END.
 			payload,
 			{
 				headers: {
-					Authorization: `Bearer ${process.env.HUGGINGFACE_KEY2}`,
+					Authorization: `Bearer ${process.env.HUGGINGFACE_KEY}`,
 					"Content-Type": "application/json"
 				},
 				timeout: 25000
