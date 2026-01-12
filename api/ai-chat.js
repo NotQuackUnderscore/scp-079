@@ -122,7 +122,7 @@ TRANSCRIPT END.
 					Authorization: `Bearer ${process.env.HUGGINGFACE_KEY3}`,
 					"Content-Type": "application/json"
 				},
-				timeout: 25000
+				timeout: 10000
 			}
 		);
 
