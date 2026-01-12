@@ -118,6 +118,6 @@ TRANSCRIPT END.
 			"HuggingFace router error:",
 			err.response?.data || err.message
 		);
-		return res.status(200).json({ reply: "..." });
+		return res.status(200).json({ reply: "Router error" });
 	}
 }
